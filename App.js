@@ -1,20 +1,42 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Button, FlatList, TextInput } from 'react-native';
+import HabitItem from './components/HabitItem';
+import HabitSettings from './components/HabitSettings';
+import StorageManager from './managers/StorageManager';
+import ReminderManager from './managers/ReminderManager';
 
-export default function App() {
+const App = () => {
+  const [habits, setHabits] = useState([]);
+  const [newHabit, setNewHabit] = useState('');
+
+  useEffect(() => {
+    StorageManager.loadHabits().then(setHabits);
+  }, []);
+
+  const addHabit = () => {
+    const habit = { name: newHabit, goal: 1, streak: 0, reminderTime: '' };
+    setHabits([...habits, habit]);
+    setNewHabit('');
+  };
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+    <View style={{ padding: 100 }}>
+      <TextInput
+        placeholder="New Habit"
+        value={newHabit}
+        onChangeText={setNewHabit}
+        style={{ borderBottomWidth: 1, marginBottom: 20 }}
+      />
+      <Button title="Add Habit" onPress={addHabit} />
+      <FlatList
+        data={habits}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item }) => (
+          <HabitItem habit={item} />
+        )}
+      />
     </View>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;
