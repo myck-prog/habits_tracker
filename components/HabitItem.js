@@ -1,18 +1,17 @@
-// HabitItem.js
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import StorageManager from '../managers/StorageManager';
 
-const HabitItem = ({ habit }) => {
-  const handleComplete = async () => {
-    await StorageManager.completeHabit(habit.id);
+const HabitItem = ({ habit, onUpdate }) => {
+  const handlePress = async () => {
+    await onUpdate(habit.id);
   };
 
   return (
-    <TouchableOpacity onPress={handleComplete}>
+    <TouchableOpacity onPress={handlePress}>
       <View>
-        <Text>{habit.name}</Text>
+        <Text>{habit.name} (ID: {habit.id})</Text>
         <Text>Streak: {habit.streak}</Text>
+        <Text>Completed: {habit.completed ? 'Yes' : 'No'}</Text>
       </View>
     </TouchableOpacity>
   );
